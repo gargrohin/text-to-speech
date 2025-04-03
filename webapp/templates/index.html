@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartesia TTS // TE Style</title>
+    <!-- Link to the TE-inspired CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>CARTESIA TTS</h1>
+
+        <form id="ttsForm">
+            <div class="form-group">
+                <label for="apiKey">API KEY</label>
+                <input type="password" id="apiKey" name="apiKey" required placeholder="Enter your Cartesia API Key">
+            </div>
+            <div class="form-group">
+                <label for="text">INPUT TEXT</label>
+                <textarea id="text" name="text" required placeholder="Type or paste text here..."></textarea>
+            </div>
+            <button type="submit" id="submitBtn" class="action-button">SYNTHESIZE</button>
+        </form>
+
+        <div id="status" class="status-box"></div>
+        <div id="errorMessage" class="error-box"></div>
+
+        <!-- Wrap audio player for consistent spacing -->
+        <div class="audio-container">
+             <audio id="audioPlayer" controls></audio>
+        </div>
+    </div> <!-- /container -->
+
+    <script>
+        // --- JavaScript remains exactly the same as the previous version ---
+        const form = document.getElementById('ttsForm');
+        const apiKeyInput = document.getElementById('apiKey');
+        const textInput = document.getElementById('text');
+        const submitBtn = document.getElementById('submitBtn');
+        const statusDiv = document.getElementById('status');
+        const errorDiv = document.getElementById('errorMessage');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const audioContainer = document.querySelector('.audio-container'); // Get container
+
+        // Hide audio player initially
+        audioContainer.style.display = 'none';
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent default page reload
+
+            const apiKey = apiKeyInput.value.trim();
+            const text = textInput.value.trim();
+
+            if (!apiKey || !text) {
+                errorDiv.textContent = 'API KEY AND TEXT REQUIRED.';
+                errorDiv.style.display = 'block'; // Show error box
+                statusDiv.style.display = 'none'; // Hide status
+                return;
+            }
+
+            // --- UI Feedback: Start ---
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'GENERATING...';
+            statusDiv.textContent = 'SENDING REQUEST...';
+            statusDiv.style.display = 'block'; // Show status
+            errorDiv.textContent = ''; // Clear previous errors
+            errorDiv.style.display = 'none'; // Hide error box
+            audioPlayer.src = ''; // Clear previous audio
+            audioContainer.style.display = 'none'; // Hide player
+            // ---
+
+            try {
+                statusDiv.textContent = 'CALLING CARTESIA API...';
+
+                const response = await fetch('/generate_speech', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ apiKey, text }),
+                });
+
+                if (!response.ok) {
+                    let errorMsg = `API CALL FAILED (${response.status})`;
+                    try {
+                        const errorData = await response.json();
+                        // Make error more TE-like (uppercase)
+                        errorMsg = (errorData.error || JSON.stringify(errorData)).toUpperCase();
+                    } catch (e) {
+                        errorMsg = (await response.text()).toUpperCase();
+                    }
+                    throw new Error(errorMsg);
+                }
+
+                statusDiv.textContent = 'RECEIVING AUDIO STREAM...';
+
+                const audioBlob = await response.blob();
+                const audioUrl = URL.createObjectURL(audioBlob);
+
+                audioPlayer.src = audioUrl;
+                audioContainer.style.display = 'block'; // Show player container
+                // audioPlayer.play(); // Don't auto-play, let user click
+
+                statusDiv.textContent = 'AUDIO READY.'; // Update status
+
+                // Cleanup function
+                const cleanup = () => {
+                    URL.revokeObjectURL(audioUrl);
+                    console.log("Object URL revoked");
+                    audioPlayer.removeEventListener('ended', cleanup);
+                    audioPlayer.removeEventListener('error', cleanupError);
+                };
+                const cleanupError = (e) => {
+                     errorDiv.textContent = 'ERROR PLAYING AUDIO.';
+                     errorDiv.style.display = 'block';
+                     console.error("Audio playback error:", e);
+                     cleanup();
+                }
+
+                audioPlayer.addEventListener('ended', cleanup);
+                audioPlayer.addEventListener('error', cleanupError);
+
+
+            } catch (error) {
+                console.error('Error:', error);
+                errorDiv.textContent = `ERROR: ${error.message}`;
+                errorDiv.style.display = 'block'; // Show error
+                statusDiv.textContent = ''; // Clear status on error
+                statusDiv.style.display = 'none'; // Hide status
+            } finally {
+                // --- UI Feedback: End ---
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'SYNTHESIZE';
+                // ---
+            }
+        });
+    </script>
+</body>
+</html>

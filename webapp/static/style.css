@@ -1,0 +1,172 @@
+/* static/style.css */
+
+/* --- Base Styles & Fonts --- */
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif; /* Clean sans-serif */
+    background-color: #e0e0e0; /* TE-style light grey background */
+    color: #333333; /* Dark grey text */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align items to the top */
+    min-height: 100vh;
+    padding-top: 40px; /* Add some space at the top */
+}
+
+/* --- Container --- */
+.container {
+    background-color: #f0f0f0; /* Slightly lighter grey for the main block */
+    padding: 30px 40px;
+    border-radius: 6px; /* Subtle rounding */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    max-width: 550px;
+    width: 90%;
+    box-sizing: border-box;
+    text-align: center; /* Center heading and button */
+}
+
+/* --- Headings --- */
+h1 {
+    color: #222;
+    font-weight: bold;
+    font-size: 1.5rem; /* Adjust size as needed */
+    letter-spacing: 1px; /* Slight letter spacing */
+    margin-top: 0;
+    margin-bottom: 30px;
+    text-transform: uppercase; /* Uppercase heading */
+}
+
+/* --- Form Styling --- */
+#ttsForm {
+    margin-bottom: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left; /* Align labels and inputs left */
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 0.75rem; /* Smaller label text */
+    color: #555;
+    text-transform: uppercase; /* Uppercase labels */
+    letter-spacing: 0.5px;
+}
+
+input[type="password"],
+textarea {
+    width: 100%; /* Full width within container */
+    padding: 12px;
+    border: 1px solid #cccccc; /* Simple border */
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    background-color: #ffffff; /* White background for inputs */
+    color: #333;
+    transition: border-color 0.2s ease;
+}
+
+input[type="password"]:focus,
+textarea:focus {
+    border-color: #f7d64f; /* Highlight with accent color on focus */
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 0 2px rgba(247, 214, 79, 0.3); /* Subtle glow on focus */
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* --- Button Styling (TE Accent) --- */
+.action-button {
+    padding: 12px 30px;
+    background-color: #f7d64f; /* TE Yellow */
+    color: #333; /* Dark text on yellow */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-transform: uppercase; /* Uppercase button text */
+    letter-spacing: 1px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    display: inline-block;
+    margin-top: 10px; /* Space above button */
+}
+
+.action-button:hover {
+    background-color: #e6c33e; /* Slightly darker yellow on hover */
+}
+
+.action-button:active {
+     transform: scale(0.98); /* Subtle press effect */
+}
+
+.action-button:disabled {
+    background-color: #cccccc; /* Grey out when disabled */
+    color: #777777;
+    cursor: not-allowed;
+}
+
+/* --- Status & Error Boxes --- */
+.status-box,
+.error-box {
+    padding: 12px;
+    margin-top: 20px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    display: none; /* Hidden by default */
+    text-align: left;
+    font-weight: bold;
+    text-transform: uppercase; /* Uppercase status/error messages */
+}
+
+.status-box {
+    background-color: #d9eaf7; /* Light blue/grey for status */
+    border: 1px solid #b4d3e8;
+    color: #3a6f9a;
+}
+
+.error-box {
+    background-color: #f8d7da; /* Light red/pink for errors */
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+/* --- Audio Player Styling --- */
+.audio-container {
+    margin-top: 25px;
+    display: none; /* Hidden until audio is ready */
+}
+
+audio {
+    width: 100%; /* Make player take full width */
+    border-radius: 4px;
+    /* Basic control styling (limited cross-browser consistency) */
+    filter: contrast(1.1) brightness(1.05); /* Subtle filter to make it pop slightly */
+}
+
+/* Try to style controls (highly browser dependent) */
+audio::-webkit-media-controls-panel {
+  background-color: #d0d0d0; /* Match background tones */
+  border-radius: 4px;
+}
+
+audio::-webkit-media-controls-play-button,
+audio::-webkit-media-controls-mute-button {
+   /* You might add subtle filter effects here if desired */
+}
+
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display {
+  color: #333;
+  font-weight: bold;
+  text-shadow: none;
+}
+
+/* Add styles for Firefox if needed (prefix with -moz-) */
